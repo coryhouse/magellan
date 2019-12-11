@@ -1,0 +1,69 @@
+{
+  "users": [
+    {
+      "id": 2,
+      "name": "Brian",
+      "role": "user"
+    },
+    {
+      "id": 3,
+      "name": "Steve",
+      "role": "user"
+    },
+    {
+      "id": 4,
+      "name": "sdagdaxgdsg",
+      "role": "sdagadsg"
+    },
+    {
+      "id": 5,
+      "name": "sdagdsagdssda",
+      "role": "sddsg"
+    },
+    {
+      "id": 6,
+      "name": "test",
+      "role": "test"
+    },
+    {
+      "name": "bar",
+      "role": "bar",
+      "id": 7
+    },
+    {
+      "id": 8,
+      "name": "",
+      "role": ""
+    },
+    {
+      "id": 9,
+      "name": "sdagsdagdsa",
+      "role": "ssdgdsg"
+    },
+    {
+      "name": "mine",
+      "role": "works",
+      "id": 10
+    },
+    {
+      "id": 11,
+      "name": "sdgdasgdsag",
+      "role": ""
+    },
+    {
+      "id": 12,
+      "name": "adsgdsag",
+      "role": ""
+    },
+    {
+      "id": 13,
+      "name": "asdgsdg",
+      "role": "sdgsdg"
+    },
+    {
+      "id": 14,
+      "name": "",
+      "role": ""
+    }
+  ]
+}
