@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import Input from "../reusable/Input";
-import { addUser } from "../api/userApi";
-import { Redirect } from "react-router-dom";
+import { saveUser, getUser } from "../api/userApi";
+import { Redirect, useRouteMatch } from "react-router-dom";
 
 function ManageUser({ setSnackbar }) {
+  const match = useRouteMatch();
   const [user, setUser] = useState({
     id: null,
     name: "",
@@ -13,6 +14,13 @@ function ManageUser({ setSnackbar }) {
   const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState({});
   const [saveCompleted, setSaveCompleted] = useState(false);
+
+  useEffect(() => {
+    // If we're editing a user
+    if (match.params.userId) {
+      getUser(match.params.userId).then(user => setUser(user));
+    }
+  }, [match.params.userId]);
 
   function handleInputChange({ target }) {
     setUser({ ...user, [target.name]: target.value });
@@ -34,7 +42,7 @@ function ManageUser({ setSnackbar }) {
     event.preventDefault(); // don't post back to the server
     if (!isValid()) return;
     setIsSaving(true);
-    addUser(user)
+    saveUser(user)
       .then(() => {
         setSaveCompleted(true);
         setSnackbar({

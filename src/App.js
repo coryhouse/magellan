@@ -27,7 +27,7 @@ function App() {
         <Users />
       </Route>
 
-      <Route path="/user">
+      <Route path="/user/:userId?">
         <ManageUser setSnackbar={setSnackbar} />
       </Route>
     </>

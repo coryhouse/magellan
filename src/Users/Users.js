@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { getUsers, deleteUser } from "../api/userApi";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
-const Users = () => {
+const Users = props => {
+  const history = useHistory();
   // Using array destructuring to declare state and setter.
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -36,6 +37,9 @@ const Users = () => {
               <td>
                 <button onClick={event => handleDeleteUser(user.id)}>
                   Delete
+                </button>
+                <button onClick={() => history.push("/user/" + user.id)}>
+                  Edit
                 </button>
               </td>
               <td>{user.name}</td>
