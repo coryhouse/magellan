@@ -1,10 +1,10 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import Input from "../reusable/Input";
 import { addUser } from "../api/userApi";
 import { Redirect } from "react-router-dom";
-import Snackbar from "@material-ui/core/Snackbar";
 
-function ManageUser() {
+function ManageUser({ setSnackbar }) {
   const [user, setUser] = useState({
     id: null,
     name: "",
@@ -37,8 +37,15 @@ function ManageUser() {
     addUser(user)
       .then(() => {
         setSaveCompleted(true);
+        setSnackbar({
+          message: "User saved"
+        });
       })
       .catch(error => {
+        setSnackbar({
+          message: "Sorry, the save failed."
+        });
+        setIsSaving(false);
         console.error(error);
       });
   }
@@ -46,7 +53,6 @@ function ManageUser() {
   return (
     <form onSubmit={handleSubmit}>
       {saveCompleted && <Redirect to="/users" />}
-      <Snackbar message={<span>Sorry, the save failed.</span>} open={true} />
       <Input
         label="Name"
         id="name"
@@ -69,5 +75,9 @@ function ManageUser() {
     </form>
   );
 }
+
+ManageUser.propTypes = {
+  setSnackbar: PropTypes.func.isRequired
+};
 
 export default ManageUser;
