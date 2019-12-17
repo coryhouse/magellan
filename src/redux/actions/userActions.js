@@ -23,3 +23,16 @@ export function deleteUser(userId) {
       .then(() => dispatch(deleteUserSuccess(userId)));
   };
 }
+
+export function saveUser(user) {
+  return function(dispatch) {
+    return userApi
+      .saveUser(user)
+      .then(() =>
+        dispatch({
+          type: user.id ? "EDIT_USER_SUCCESS" : "ADD_USER_SUCCESS",
+          user
+        })
+      );
+  };
+}

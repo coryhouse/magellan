@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import * as userActions from "../redux/actions/userActions";
 import Input from "../reusable/Input";
-import { saveUser, getUser } from "../api/userApi";
 import { Redirect, useRouteMatch } from "react-router-dom";
 
-function ManageUser({ setSnackbar }) {
+function ManageUser({ setSnackbar, users, loadUsers, saveUser }) {
   const match = useRouteMatch();
   const [user, setUser] = useState({
     id: null,
@@ -18,9 +19,14 @@ function ManageUser({ setSnackbar }) {
   useEffect(() => {
     // If we're editing a user
     if (match.params.userId) {
-      getUser(match.params.userId).then(user => setUser(user));
+      // Has the Redux store been loaded with users yet?
+      if (users.length === 0) {
+        loadUsers();
+      } else {
+        setUser(users.find(u => u.id === Number(match.params.userId)));
+      }
     }
-  }, [match.params.userId]);
+  }, [loadUsers, match.params.userId, users]);
 
   function handleInputChange({ target }) {
     setUser({ ...user, [target.name]: target.value });
@@ -88,4 +94,15 @@ ManageUser.propTypes = {
   setSnackbar: PropTypes.func.isRequired
 };
 
-export default ManageUser;
+function mapStateToProps(state) {
+  return {
+    users: state.users
+  };
+}
+
+const mapDispatchToProps = {
+  loadUsers: userActions.loadUsers,
+  saveUser: userActions.saveUser
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ManageUser);
