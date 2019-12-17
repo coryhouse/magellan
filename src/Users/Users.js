@@ -1,24 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { getUsers, deleteUser } from "../api/userApi";
+import { connect } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
+import * as userActions from "../redux/actions/userActions";
 
-const Users = props => {
+const Users = ({ loadUsers, users, deleteUser }) => {
   const history = useHistory();
   // Using array destructuring to declare state and setter.
-  const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Handle promise and store users in state
-    getUsers()
-      .then(setUsers)
-      .finally(() => setIsLoading(false));
-  }, []);
+    loadUsers().finally(() => setIsLoading(false));
+  }, [loadUsers]);
 
   function handleDeleteUser(id) {
-    deleteUser(id).then(() => {
-      setUsers(users.filter(user => user.id !== id));
-    });
+    deleteUser(id);
   }
 
   function userTable() {
@@ -62,8 +57,17 @@ const Users = props => {
   );
 };
 
-export default Users;
+// What Redux data should be injected on props in the component above?
+function mapStateToProps(state) {
+  return {
+    users: state.users
+  };
+}
 
-// Validation
-// Error handling on promises
-// Move to async await
+// What Redux actions should be injected on props in the component above?
+const mapDispatchToProps = {
+  loadUsers: userActions.loadUsers,
+  deleteUser: userActions.deleteUser
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Users);

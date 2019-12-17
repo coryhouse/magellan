@@ -1,11 +1,6 @@
 {
   "users": [
     {
-      "id": 2,
-      "name": "Brian",
-      "role": "user"
-    },
-    {
       "id": 3,
       "name": "Steve",
       "role": "user"
@@ -64,6 +59,26 @@
       "id": 14,
       "name": "",
       "role": ""
+    },
+    {
+      "id": 15,
+      "name": "something new",
+      "role": "admin"
+    },
+    {
+      "id": 16,
+      "name": "new val",
+      "role": "new role"
+    },
+    {
+      "id": 17,
+      "name": "sadgdsg",
+      "role": "sdg"
+    },
+    {
+      "id": 18,
+      "name": "almost 5!!",
+      "role": "roel"
     }
   ]
 }
