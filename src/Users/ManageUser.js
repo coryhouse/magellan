@@ -9,6 +9,7 @@ function ManageUser({ setSnackbar }) {
   const [user, setUser] = useState({
     id: null,
     name: "",
+    email: "",
     role: ""
   });
   const [isSaving, setIsSaving] = useState(false);
@@ -30,6 +31,7 @@ function ManageUser({ setSnackbar }) {
     const _errors = {};
 
     if (!user.name) _errors.name = "Name is required.";
+    if (!user.email) _errors.email = "Email is required.";
     if (!user.role) _errors.role = "Role is required.";
 
     setErrors(_errors);
@@ -68,6 +70,15 @@ function ManageUser({ setSnackbar }) {
         onChange={handleInputChange}
         value={user.name}
         error={errors.name}
+      />
+
+      <Input
+        label="Email"
+        id="email"
+        name="email"
+        onChange={handleInputChange}
+        value={user.email}
+        error={errors.email}
       />
 
       <Input
