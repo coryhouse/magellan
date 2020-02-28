@@ -1,19 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { getUsers, deleteUser } from "../api/userApi";
+import React from "react";
+import PropTypes from "prop-types";
+import { deleteUser } from "../api/userApi";
 import { Link, useHistory } from "react-router-dom";
+import { useLoggedInUserContext } from "../LoggedInUserContext";
+import { userPropType } from "../propTypes";
 
-const Users = props => {
+const Users = ({ users, setUsers }) => {
+  const { loggedInUser, logout } = useLoggedInUserContext();
   const history = useHistory();
   // Using array destructuring to declare state and setter.
-  const [users, setUsers] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // Handle promise and store users in state
-    getUsers()
-      .then(setUsers)
-      .finally(() => setIsLoading(false));
-  }, []);
 
   function handleDeleteUser(id) {
     deleteUser(id).then(() => {
@@ -53,19 +48,36 @@ const Users = props => {
     );
   }
 
-  if (isLoading) return "Loading...";
-
   return (
     <>
       <h1>Users</h1>
+      {loggedInUser && (
+        <h2>
+          Hi {loggedInUser.name}{" "}
+          <a
+            href="/logout"
+            onClick={event => {
+              event.preventDefault();
+              logout();
+            }}
+          >
+            Logout
+          </a>
+        </h2>
+      )}
       <Link to="/user">Add User</Link>
       {users.length === 0 ? "No users. ☹️" : userTable()}
     </>
   );
 };
 
-export default Users;
+Users.propTypes = {
+  users: PropTypes.arrayOf(userPropType).isRequired,
+  setUsers: PropTypes.func.isRequired
+};
 
-// Validation
-// Error handling on promises
-// Move to async await
+Users.defaultProps = {
+  users: []
+};
+
+export default Users;

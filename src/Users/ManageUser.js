@@ -1,30 +1,45 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import PropTypes from "prop-types";
 import Input from "../reusable/Input";
 import { saveUser, getUser } from "../api/userApi";
 import { Redirect, useRouteMatch } from "react-router-dom";
+import manageUserReducer from "./manageUserReducer";
 
-function ManageUser({ setSnackbar }) {
-  const match = useRouteMatch();
-  const [user, setUser] = useState({
+const STATUS = {
+  LOADING: "LOADING",
+  ERROR: "ERROR",
+  SAVING: "SAVING",
+  SAVED: "SAVED",
+  IDLE: "IDLE"
+};
+
+function ManageUser({ setSnackbar, users, setUsers }) {
+  const [user, dispatch] = useReducer(manageUserReducer, {
     id: null,
     name: "",
     email: "",
     role: ""
   });
-  const [isSaving, setIsSaving] = useState(false);
+  const match = useRouteMatch();
+  const [status, setStatus] = useState(STATUS.IDLE);
   const [errors, setErrors] = useState({});
-  const [saveCompleted, setSaveCompleted] = useState(false);
 
+  // Implement isLoading state. Show "loading..." until getUser call completes
+
+  // This isn't technically necessary, but requesting data from server
+  // to avoid presenting user with a stale record.
   useEffect(() => {
     // If we're editing a user
     if (match.params.userId) {
-      getUser(match.params.userId).then(user => setUser(user));
+      setStatus(STATUS.LOADING);
+      getUser(match.params.userId)
+        .then(user => dispatch({ type: "saveUser", user: user }))
+        .finally(() => setStatus(STATUS.IDLE));
     }
   }, [match.params.userId]);
 
   function handleInputChange({ target }) {
-    setUser({ ...user, [target.name]: target.value });
+    dispatch({ type: "setUser", target });
   }
 
   function isValid() {
@@ -40,29 +55,41 @@ function ManageUser({ setSnackbar }) {
     return Object.keys(_errors).length === 0;
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault(); // don't post back to the server
     if (!isValid()) return;
-    setIsSaving(true);
-    saveUser(user)
-      .then(() => {
-        setSaveCompleted(true);
-        setSnackbar({
-          message: "User saved"
-        });
-      })
-      .catch(error => {
-        setSnackbar({
-          message: "Sorry, the save failed."
-        });
-        setIsSaving(false);
-        console.error(error);
+    setStatus(STATUS.SAVING);
+    try {
+      const savedUser = await saveUser(user);
+      setStatus(STATUS.SAVED);
+      if (user.id) {
+        // if editing an existing user...
+        setUsers(
+          users.map(u => {
+            // If this is the user that was just edited, replace it in array.
+            if (u.id === user.id) return savedUser;
+            return u;
+          })
+        );
+      } else {
+        // adding a new user
+        setUsers([...users, savedUser]);
+      }
+
+      setSnackbar({
+        message: "User saved"
       });
+    } catch (err) {
+      console.error(err);
+      setStatus(STATUS.IDLE);
+    }
   }
+
+  if (status === STATUS.LOADING) return "Loading...";
 
   return (
     <form onSubmit={handleSubmit}>
-      {saveCompleted && <Redirect to="/users" />}
+      {status === STATUS.SAVED && <Redirect to="/users" />}
       <Input
         label="Name"
         id="name"
@@ -90,12 +117,18 @@ function ManageUser({ setSnackbar }) {
         error={errors.role}
       />
 
-      <input type="submit" value="Save" disabled={isSaving ? "disabled" : ""} />
+      <input
+        type="submit"
+        value="Save"
+        disabled={status === STATUS.SAVING ? "disabled" : ""}
+      />
     </form>
   );
 }
 
 ManageUser.propTypes = {
+  users: PropTypes.array.isRequired,
+  setUsers: PropTypes.func.isRequired,
   setSnackbar: PropTypes.func.isRequired
 };
 

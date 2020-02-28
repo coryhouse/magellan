@@ -2,7 +2,7 @@
   "users": [
     {
       "id": 2,
-      "name": "Brian",
+      "name": "Brian4",
       "email": "briguy@gmail.com",
       "role": "user"
     },
@@ -11,6 +11,18 @@
       "name": "Cory",
       "email": "c@h2.com",
       "role": "admin"
+    },
+    {
+      "id": 4,
+      "name": "dgsddgs",
+      "email": "sddsg",
+      "role": "sdgsd"
+    },
+    {
+      "id": 5,
+      "name": "Tommy boy",
+      "email": "t@test.com",
+      "role": "goofball"
     }
   ]
 }
